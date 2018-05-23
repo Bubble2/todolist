@@ -11,6 +11,8 @@ const todos = (state = fromJS([]), action) => {
             return state.map(todo => todo.get('id')==action.id?todo.set('isFinish',!todo.get('isFinish')):todo);
         case constants.DELETE_TODOS:
             return state.filter(todo => !(action.id == todo.get('id')));  
+        case constants.RENDER_TODOS:
+            return state.concat(action.todos);
         default:
             return state;
     }

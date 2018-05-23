@@ -1,11 +1,11 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const app = express();
-const {userModel} = require('./db');
+const {todoModel} = require('./db');
 
 
 app.get('/api',(req,res) => {
-    userModel.findOne({},(err,doc) => {
+    todoModel.find({},(err,doc) => {
         if(err){
             console.log('查找数据失败');
             throw err;
@@ -22,15 +22,15 @@ app.get('/api',(req,res) => {
 
 app.post('/api',bodyParser.json(), (req,res)=>{
     const body = req.body;
-    const num = body.num;
-    userModel.update({id:'1'},{'$set':{num:num}},(err,doc) => {
+    const todo = body.todo;
+    console.log(todo)
+    todoModel.create(todo,(err,result)=>{
         if(err){
-            console.log('更新数据失败');
+            console.log('添加数据失败');
             throw err;
         }
-        console.log('更新数据成功',doc)
-        res.json({'success':'success'});
-    })
+        console.log("数据添加成功",result);
+    });
 })
 
 const server = app.listen(3000,()=>{

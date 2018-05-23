@@ -1,5 +1,5 @@
 import React from 'react';
-import {Row,Col,Button,Input,List,Layout,Radio} from 'antd';
+import {Row,Col,Button,Input,List,Layout,Radio,Spin} from 'antd';
 const {Header,Content,Footer} = Layout;
 
 export default class Hello extends React.Component{
@@ -17,6 +17,7 @@ export default class Hello extends React.Component{
             const value = inpObj.value;
             if(value == "") return;
             this.props.addTodos(value);
+            this.props.saveTodos(value);
             inpObj.value = '';
         }
     }
@@ -37,6 +38,10 @@ export default class Hello extends React.Component{
         this.props.filterTodos(value);
     }
 
+    componentDidMount(){
+        this.props.getTodos();
+    }
+
     render(){
         const {todos} = this.props;
         return (
@@ -52,7 +57,7 @@ export default class Hello extends React.Component{
                                 style={item.get('isFinish')?{textDecoration:'line-through'}:{textDecoration:'none'}}
                                 onClick={this.setFinishHandle}
                                 actions={[<a>edit</a>, <a onClick={this.deleteHandle} id={item.get('id')}>delete</a>]}
-                                >{item.get('value')}</List.Item>
+                                >{item.get('text')}</List.Item>
                             )}/>
                         </Content>
                         <Footer style={{padding:0,background:'#fff'}}>

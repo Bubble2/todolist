@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-mongoose.connect('mongodb://localhost:27017/count');
+mongoose.connect('mongodb://localhost:27017/todoList');
 
 mongoose.connection.on('connected',()=>{
     console.log('mongo connect success');
@@ -8,18 +8,20 @@ mongoose.connection.on('connected',()=>{
 
 let schema = new mongoose.Schema({
     id:Number,
-    num:Number,
+    text:String,
+    isFinish:Boolean,
+    isDelete:Boolean
 },{
     versionKey:false
 });
 
-const userModel = mongoose.model('count',schema);
+const todoModel = mongoose.model('todos',schema);
 
-// const userList = [
-//     {id:0,nickname:"pwl",mobile:"15556930270",password:"123456"},
-//     {id:1,nickname:"ws",mobile:"15556931933",password:"123456"},
-//     {id:2,nickname:"yl",mobile:"15556930268",password:"123456"}
-// ]
+const todos = [
+    {id:0,text:"吃饭",isFinish:false,isDelete:false},
+    {id:1,text:"睡觉",isFinish:false,isDelete:false},
+    {id:2,text:"敲代码",isFinish:false,isDelete:false}
+]
 
 // userModel.create({id:1,num:2},(err,doc) => {
 //     if(err){
@@ -29,7 +31,7 @@ const userModel = mongoose.model('count',schema);
 //     console.log('新增数据成功',doc);
 // })
 
-// userModel.insert({id:4,nickname:"dongdong",mobile:"15556930270",password:"123456"},(err,doc) => {
+// todoModel.create({ id: 1, text: '111', isFinish: false, isDelete: false },(err,doc) => {
 //     if(err){
 //         console.log('新增数据失败');
 //         throw err;
@@ -37,7 +39,7 @@ const userModel = mongoose.model('count',schema);
 //     console.log('新增数据成功');
 // })
 
-// userModel.insertMany(userList,(err,result)=>{
+// todoModel.insertMany(todos,(err,result)=>{
 //     if(err){
 //         console.log('添加数据失败');
 //         throw err;
@@ -45,7 +47,7 @@ const userModel = mongoose.model('count',schema);
 //     console.log("数据添加成功",result);
 // });
 
-// userModel.remove({},(err,doc)=>{
+// todoModel.remove({},(err,doc)=>{
 //     if(err){
 //         console.log('删除数据失败');
 //         throw err;
@@ -62,6 +64,6 @@ const userModel = mongoose.model('count',schema);
 // })
 
 module.exports = {
-    userModel: userModel
+    todoModel: todoModel
 }
 
