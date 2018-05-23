@@ -30,6 +30,19 @@ app.post('/api',bodyParser.json(), (req,res)=>{
             throw err;
         }
         console.log("数据添加成功",result);
+        res.json({"success":"success"});
+    });
+})
+
+app.delete('/api/:id',(req,res)=>{
+    const id = req.params.id;
+    todoModel.remove({id:id},(err,result)=>{
+        if(err){
+            console.log('删除数据失败');
+            throw err;
+        }
+        console.log("数据删除成功",result);
+        res.json({"success":"success"});
     });
 })
 

@@ -2,8 +2,6 @@ import axios from 'axios';
 import {fromJS} from 'immutable';
 import * as constants from 'constants/index';
 
-let nextId = 0;
-
 //action
 const addTodos = (text) => ({
     type:constants.ADD_TODOS,
@@ -31,15 +29,18 @@ const renderTodos = (todos) =>({
     todos
 })
 
+
+//生成一条数据
 const generateTodo = (text) =>(
     {
-        id:nextId++,
+        id:(new Date()).getTime(),
         text,
         isFinish:false,
         isDelete:false
     }
 )
 
+//初始化获取数据
 const getTodos = () => dispatch => {
     axios.get('/api').then((res)=>{
         const data = res.data;
@@ -49,13 +50,25 @@ const getTodos = () => dispatch => {
     })
 }
 
-const saveTodos = (text) => dispatch => {
+//新增一条保存数据
+const addTodosSync = (text) => dispatch => {
     const todo = generateTodo(text);
     axios.post('/api',{
         todo
     }).then((res)=>{
         if(res.data.success == 'success'){
-            alert('提交成功')
+            console.log('提交成功')
+        }else{
+            console.log(res);
+        }
+    })
+}
+
+//删除一条数据
+const deleteTodosSync = (id) => dispatch => {
+    axios.delete('/api/'+id+'/').then((res)=>{
+        if(res.data.success == 'success'){
+            console.log('删除成功')
         }else{
             console.log(res);
         }
@@ -68,5 +81,6 @@ export {
     deleteTodos,
     filterTodos,
     getTodos,
-    saveTodos
+    addTodosSync,
+    deleteTodosSync
 }

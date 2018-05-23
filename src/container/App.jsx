@@ -1,7 +1,7 @@
 import {connect} from 'react-redux';
 import App from 'components/App';
 import {bindActionCreators} from 'redux';
-import {addTodos,setTodosFinish,deleteTodos,filterTodos,getTodos,saveTodos} from 'actions/index';
+import {addTodos,setTodosFinish,deleteTodos,filterTodos,getTodos,addTodosSync,deleteTodosSync} from 'actions/index';
 
 const getFilterTodos = (todos,filter)=>{
     if(filter == 'finished'){
@@ -26,7 +26,8 @@ const mapDispatchToProps = dispatch =>{
         deleteTodos,
         filterTodos,
         getTodos,
-        saveTodos
+        addTodosSync,
+        deleteTodosSync
     },dispatch);
 }
 

@@ -17,20 +17,23 @@ export default class Hello extends React.Component{
             const value = inpObj.value;
             if(value == "") return;
             this.props.addTodos(value);
-            this.props.saveTodos(value);
+            this.props.addTodosSync(value);
             inpObj.value = '';
         }
     }
 
     setFinishHandle(e){
         const itemObj = e.currentTarget;
-        this.props.setTodosFinish(itemObj.id);
+        const id = itemObj.getAttribute('data-id');
+        this.props.setTodosFinish(id);
     }
 
     deleteHandle(e){
         e.stopPropagation();
         const itemObj = e.currentTarget;
-        this.props.deleteTodos(itemObj.id);
+        const id = itemObj.getAttribute('data-id');
+        this.props.deleteTodos(id);
+        this.props.deleteTodosSync(id);
     }
 
     filterTodosHandle(e){
@@ -51,12 +54,12 @@ export default class Hello extends React.Component{
                     <Layout>
                         <Header style={{color:'#fff',textAlign:'center',fontSize:'20px'}}>Todolist</Header>       
                         <Content>
-                            <Input size="large" placeholder="please input..." onKeyUp={this.addTodosHandle}></Input>
+                            <Input size="large" placeholder="please input ..., then press 'enter' key" onKeyUp={this.addTodosHandle}></Input>
                             <List bordered dataSource={todos} renderItem={(item) => (
-                                <List.Item id={item.get('id')}
+                                <List.Item data-id={item.get('id')}
                                 style={item.get('isFinish')?{textDecoration:'line-through'}:{textDecoration:'none'}}
                                 onClick={this.setFinishHandle}
-                                actions={[<a>edit</a>, <a onClick={this.deleteHandle} id={item.get('id')}>delete</a>]}
+                                actions={[<a>edit</a>, <a onClick={this.deleteHandle} data-id={item.get('id')}>delete</a>]}
                                 >{item.get('text')}</List.Item>
                             )}/>
                         </Content>
