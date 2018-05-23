@@ -1,2 +1,2 @@
 # todolist
-webpack+react+redux+immutable+ant搭建的一个todolist
+webpack+react+redux+immutable+ant+express+mongodb搭建的一个todolist
