@@ -9,6 +9,11 @@ export default class Hello extends React.Component{
         this.setFinishHandle = this.setFinishHandle.bind(this);
         this.deleteHandle = this.deleteHandle.bind(this);
         this.filterTodosHandle = this.filterTodosHandle.bind(this);
+        this.editHandle = this.editHandle.bind(this);
+        this.editInpHandle = this.editInpHandle.bind(this);
+        this.state = {
+            editable:{}
+        }
     }
 
     addTodosHandle(e){
@@ -16,8 +21,9 @@ export default class Hello extends React.Component{
             const inpObj = e.currentTarget;
             const value = inpObj.value;
             if(value == "") return;
-            this.props.addTodos(value);
-            this.props.addTodosSync(value);
+            const id = (new Date()).getTime();
+            this.props.addTodos(id,value);
+            this.props.addTodosSync(id,value);
             inpObj.value = '';
         }
     }
@@ -25,7 +31,9 @@ export default class Hello extends React.Component{
     setFinishHandle(e){
         const itemObj = e.currentTarget;
         const id = itemObj.getAttribute('data-id');
+        const isFinish = itemObj.getAttribute('data-isfinish');
         this.props.setTodosFinish(id);
+        this.props.setTodosFinishSync(id,isFinish==="1"?true:false);
     }
 
     deleteHandle(e){
@@ -39,6 +47,23 @@ export default class Hello extends React.Component{
     filterTodosHandle(e){
         const value = e.target.value;
         this.props.filterTodos(value);
+    }
+
+    editHandle(e){
+        e.stopPropagation();
+        const itemObj = e.currentTarget;
+        const id = itemObj.getAttribute('data-id');
+        this.setState((prevState)=>{
+            return {
+                editable:Object.assign({},prevState.editable,{
+                    [id]:true
+                })
+            }
+        })
+    }
+
+    editInpHandle(e){
+        e.stopPropagation();
     }
 
     componentDidMount(){
@@ -56,11 +81,20 @@ export default class Hello extends React.Component{
                         <Content>
                             <Input size="large" placeholder="please input ..., then press 'enter' key" onKeyUp={this.addTodosHandle}></Input>
                             <List bordered dataSource={todos} renderItem={(item) => (
-                                <List.Item data-id={item.get('id')}
+                                <List.Item 
+                                data-id={item.get('id')}
+                                data-isfinish={item.get('isFinish')?1:0}
                                 style={item.get('isFinish')?{textDecoration:'line-through'}:{textDecoration:'none'}}
                                 onClick={this.setFinishHandle}
-                                actions={[<a>edit</a>, <a onClick={this.deleteHandle} data-id={item.get('id')}>delete</a>]}
-                                >{item.get('text')}</List.Item>
+                                actions={[
+                                <a onClick={this.editHandle} data-id={item.get('id')}>edit</a>,
+                                 <a onClick={this.deleteHandle} data-id={item.get('id')}>delete</a>]}>
+                                {this.state.editable[item.get('id')]?
+                                <Input size="small"
+                                 onClick={(e)=>{e.stopPropagation()}}
+                                 onChange={this.editInpHandle}
+                                  value={item.get('text')}></Input>:item.get('text')}
+                                </List.Item>
                             )}/>
                         </Content>
                         <Footer style={{padding:0,background:'#fff'}}>
