@@ -7,6 +7,8 @@ const todos = (state = fromJS([]), action) => {
     switch(action.type){
         case constants.ADD_TODOS:
             return state.push(action.item);
+        case constants.UPDATE_TODOS:
+            return state.map(todo => todo.get('id') == action.id?todo.set('text',action.text):todo);
         case constants.SET_TODOS_FINISH:
             return state.map(todo => todo.get('id')==action.id?todo.set('isFinish',!todo.get('isFinish')):todo);
         case constants.DELETE_TODOS:

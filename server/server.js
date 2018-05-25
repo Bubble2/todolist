@@ -47,15 +47,17 @@ app.put('/api/:id',bodyParser.json(),(req,res)=>{
 
     const body = req.body;
     const isFinishVal = body.isFinish;
-    // todoModel.findOne({id:idVal},(err,result) => {
-    //     if(err){
-    //         console.log('查找数据失败');
-    //         throw err;
-    //     }
-    //     console.log("数据查找成功",result);
-    //     res.json({"success":"success"});
-    // })
-    todoModel.update({id:idVal},{'$set':{isFinish:isFinishVal}},(err,result)=>{
+    const textVal = body.text;
+
+    let obj = {}
+    if(isFinishVal !== undefined){
+        Object.assign(obj,{isFinish:isFinishVal})
+    } 
+    if(textVal !== undefined){
+        Object.assign(obj,{text:textVal})
+    }
+
+    todoModel.update({id:idVal},{'$set':obj},(err,result)=>{
         if(err){
             console.log('修改数据失败');
             throw err;

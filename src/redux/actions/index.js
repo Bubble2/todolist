@@ -8,6 +8,12 @@ const addTodos = (id,text) => ({
     item:fromJS(generateTodo(id,text))
 })
 
+const updateTodos = (id,text) => ({
+    type:constants.UPDATE_TODOS,
+    id,
+    text
+})
+
 const setTodosFinish = id =>({
     type:constants.SET_TODOS_FINISH,
     id
@@ -75,6 +81,7 @@ const deleteTodosSync = id => dispatch => {
     })
 }
 
+//设置完成状态
 const setTodosFinishSync = (id,isFinish) => dispatch => {
     axios.put('/api/'+parseInt(id)+'/',{
         isFinish:!isFinish
@@ -87,13 +94,28 @@ const setTodosFinishSync = (id,isFinish) => dispatch => {
     })
 }
 
+//修改文本
+const updateTodosSync = (id,text) => dispatch => {
+    axios.put('/api/'+parseInt(id)+'/',{
+        text
+    }).then((res)=>{
+        if(res.data.success == 'success'){
+            console.log('修改文本成功')
+        }else{
+            console.log(res);
+        }
+    })
+}
+
 export {
     addTodos,
+    updateTodos,
     setTodosFinish,
     deleteTodos,
     filterTodos,
     getTodos,
     addTodosSync,
     deleteTodosSync,
-    setTodosFinishSync
+    setTodosFinishSync,
+    updateTodosSync
 }

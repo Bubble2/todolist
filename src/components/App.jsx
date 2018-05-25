@@ -9,8 +9,9 @@ export default class Hello extends React.Component{
         this.setFinishHandle = this.setFinishHandle.bind(this);
         this.deleteHandle = this.deleteHandle.bind(this);
         this.filterTodosHandle = this.filterTodosHandle.bind(this);
-        this.editHandle = this.editHandle.bind(this);
+        this.editToggleHandle = this.editToggleHandle.bind(this);
         this.editInpHandle = this.editInpHandle.bind(this);
+        this.editSaveHandle = this.editSaveHandle.bind(this);
         this.state = {
             editable:{}
         }
@@ -49,14 +50,14 @@ export default class Hello extends React.Component{
         this.props.filterTodos(value);
     }
 
-    editHandle(e){
+    editToggleHandle(e){
         e.stopPropagation();
         const itemObj = e.currentTarget;
         const id = itemObj.getAttribute('data-id');
         this.setState((prevState)=>{
             return {
                 editable:Object.assign({},prevState.editable,{
-                    [id]:true
+                    [id]:!prevState.editable[id]
                 })
             }
         })
@@ -64,6 +65,21 @@ export default class Hello extends React.Component{
 
     editInpHandle(e){
         e.stopPropagation();
+        const itemObj = e.currentTarget;
+        const text = itemObj.value;
+        const id = itemObj.getAttribute('data-id');
+        this.props.updateTodos(id,text);
+    }
+
+    editSaveHandle(e){
+        e.stopPropagation();
+        const {todos} = this.props;
+        const itemObj = e.currentTarget;
+        const id = itemObj.getAttribute('data-id');
+        const todo = todos.find(todo => id == todo.get('id'));
+        const text = todo.get('text');
+        this.props.updateTodosSync(id,text);
+        this.editToggleHandle(e);
     }
 
     componentDidMount(){
@@ -86,11 +102,15 @@ export default class Hello extends React.Component{
                                 data-isfinish={item.get('isFinish')?1:0}
                                 style={item.get('isFinish')?{textDecoration:'line-through'}:{textDecoration:'none'}}
                                 onClick={this.setFinishHandle}
-                                actions={[
-                                <a onClick={this.editHandle} data-id={item.get('id')}>edit</a>,
+                                actions={
+                                this.state.editable[item.get('id')]?
+                                [<a onClick={this.editSaveHandle} data-id={item.get('id')}>save</a>,
+                                <a onClick={this.editToggleHandle} data-id={item.get('id')}>cancel</a>]:
+                                [<a onClick={this.editToggleHandle} data-id={item.get('id')}>edit</a>,
                                  <a onClick={this.deleteHandle} data-id={item.get('id')}>delete</a>]}>
                                 {this.state.editable[item.get('id')]?
-                                <Input size="small"
+                                <Input
+                                data-id={item.get('id')}
                                  onClick={(e)=>{e.stopPropagation()}}
                                  onChange={this.editInpHandle}
                                   value={item.get('text')}></Input>:item.get('text')}

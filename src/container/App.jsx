@@ -3,13 +3,15 @@ import App from 'components/App';
 import {bindActionCreators} from 'redux';
 import {
     addTodos,
+    updateTodos,
     setTodosFinish,
     deleteTodos,
     filterTodos,
     getTodos,
     addTodosSync,
     deleteTodosSync,
-    setTodosFinishSync
+    setTodosFinishSync,
+    updateTodosSync
 } from 'actions/index';
 
 const getFilterTodos = (todos,filter)=>{
@@ -31,13 +33,15 @@ const mapStateToProps = state => {
 const mapDispatchToProps = dispatch =>{
     return bindActionCreators({
         addTodos,
+        updateTodos,
         setTodosFinish,
         deleteTodos,
         filterTodos,
         getTodos,
         addTodosSync,
         deleteTodosSync,
-        setTodosFinishSync
+        setTodosFinishSync,
+        updateTodosSync
     },dispatch);
 }
 
