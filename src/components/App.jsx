@@ -98,10 +98,6 @@ export default class Hello extends React.Component{
                             <Input size="large" placeholder="please input ..., then press 'enter' key" onKeyUp={this.addTodosHandle}></Input>
                             <List bordered dataSource={todos} renderItem={(item) => (
                                 <List.Item 
-                                data-id={item.get('id')}
-                                data-isfinish={item.get('isFinish')?1:0}
-                                style={item.get('isFinish')?{textDecoration:'line-through'}:{textDecoration:'none'}}
-                                onClick={this.setFinishHandle}
                                 actions={
                                 this.state.editable[item.get('id')]?
                                 [<a onClick={this.editSaveHandle} data-id={item.get('id')}>save</a>,
@@ -113,7 +109,12 @@ export default class Hello extends React.Component{
                                 data-id={item.get('id')}
                                  onClick={(e)=>{e.stopPropagation()}}
                                  onChange={this.editInpHandle}
-                                  value={item.get('text')}></Input>:item.get('text')}
+                                  value={item.get('text')}></Input>:
+                                  <div 
+                                  data-id={item.get('id')}
+                                  data-isfinish={item.get('isFinish')?1:0}
+                                  onClick={this.setFinishHandle}
+                                  style={item.get('isFinish')?{textDecoration:'line-through'}:{textDecoration:'none'}}>{item.get('text')}</div>}
                                 </List.Item>
                             )}/>
                         </Content>
