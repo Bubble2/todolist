@@ -2,7 +2,7 @@ import React from 'react';
 import {Row,Col,Button,Input,List,Layout,Radio,Spin} from 'antd';
 const {Header,Content,Footer} = Layout;
 
-export default class Hello extends React.Component{
+export default class Todolist extends React.Component{
     constructor(props){
         super(props);
         this.addTodosHandle = this.addTodosHandle.bind(this);
@@ -73,7 +73,7 @@ export default class Hello extends React.Component{
         this.setState((prevState)=>{
             return {
                 text:Object.assign({},prevState.text,{
-                    [id+'text']:text
+                    [`${id}text`]:text
                 })
             }
         })
@@ -99,8 +99,10 @@ export default class Hello extends React.Component{
         const itemObj = e.currentTarget;
         const id = itemObj.getAttribute('data-id');
         const text = this.state.text[id+'text'];
-        this.props.updateTodos(id,text);
-        this.props.updateTodosSync(id,text);
+        if(text){
+            this.props.updateTodos(id,text);
+            this.props.updateTodosSync(id,text);
+        }
         this.editToggleHandle(e);
     }
 
@@ -131,7 +133,7 @@ export default class Hello extends React.Component{
                                     data-id={item.get('id')}
                                     onClick={(e)=>{e.stopPropagation()}}
                                     onChange={this.editInpHandle}
-                                    value={this.state.text[item.get('id')+'text']?this.state.text[item.get('id')+'text']:item.get('text')}></Input>:
+                                    value={this.state.text[`${item.get('id')}text`]?this.state.text[`${item.get('id')}text`]:item.get('text')}></Input>:
                                     <div 
                                     data-id={item.get('id')}
                                     data-isfinish={item.get('isFinish')?1:0}
