@@ -12,8 +12,10 @@ export default class Hello extends React.Component{
         this.editToggleHandle = this.editToggleHandle.bind(this);
         this.editInpHandle = this.editInpHandle.bind(this);
         this.editSaveHandle = this.editSaveHandle.bind(this);
+        this.editCancelHandle = this.editCancelHandle.bind(this);
         this.state = {
-            editable:{}
+            editable:{},
+            text:{}
         }
     }
 
@@ -63,21 +65,41 @@ export default class Hello extends React.Component{
         })
     }
 
+    editCancelHandle(e){
+        e.stopPropagation();
+        const itemObj = e.currentTarget;
+        const text = itemObj.getAttribute('data-text');
+        const id = itemObj.getAttribute('data-id');
+        this.setState((prevState)=>{
+            return {
+                text:Object.assign({},prevState.text,{
+                    [id+'text']:text
+                })
+            }
+        })
+        this.editToggleHandle(e);
+    }
+
     editInpHandle(e){
         e.stopPropagation();
         const itemObj = e.currentTarget;
         const text = itemObj.value;
         const id = itemObj.getAttribute('data-id');
-        this.props.updateTodos(id,text);
+        this.setState((prevState)=>{
+            return {
+                text:Object.assign({},prevState.text,{
+                    [id+'text']:text
+                })
+            }
+        })
     }
 
     editSaveHandle(e){
         e.stopPropagation();
-        const {todos} = this.props;
         const itemObj = e.currentTarget;
         const id = itemObj.getAttribute('data-id');
-        const todo = todos.find(todo => id == todo.get('id'));
-        const text = todo.get('text');
+        const text = this.state.text[id+'text'];
+        this.props.updateTodos(id,text);
         this.props.updateTodosSync(id,text);
         this.editToggleHandle(e);
     }
@@ -92,40 +114,41 @@ export default class Hello extends React.Component{
             <Row>
                 <Col span={6} offset={9}>
                     
-                    <Layout>
                         <Header style={{color:'#fff',textAlign:'center',fontSize:'20px'}}>Todolist</Header>       
-                        <Content>
+                        <Content style={{marginTop:'10px'}}>
                             <Input size="large" placeholder="please input ..., then press 'enter' key" onKeyUp={this.addTodosHandle}></Input>
-                            <List bordered dataSource={todos} renderItem={(item) => (
-                                <List.Item 
-                                actions={
-                                this.state.editable[item.get('id')]?
-                                [<a onClick={this.editSaveHandle} data-id={item.get('id')}>save</a>,
-                                <a onClick={this.editToggleHandle} data-id={item.get('id')}>cancel</a>]:
-                                [<a onClick={this.editToggleHandle} data-id={item.get('id')}>edit</a>,
-                                 <a onClick={this.deleteHandle} data-id={item.get('id')}>delete</a>]}>
-                                {this.state.editable[item.get('id')]?
-                                <Input
-                                data-id={item.get('id')}
-                                 onClick={(e)=>{e.stopPropagation()}}
-                                 onChange={this.editInpHandle}
-                                  value={item.get('text')}></Input>:
-                                  <div 
-                                  data-id={item.get('id')}
-                                  data-isfinish={item.get('isFinish')?1:0}
-                                  onClick={this.setFinishHandle}
-                                  style={item.get('isFinish')?{textDecoration:'line-through'}:{textDecoration:'none'}}>{item.get('text')}</div>}
-                                </List.Item>
-                            )}/>
+                            <div style={{marginTop:'10px',background:'#f0f2f5'}}>
+                                <List bordered dataSource={todos} renderItem={(item) => (
+                                    <List.Item 
+                                    actions={
+                                    this.state.editable[item.get('id')]?
+                                    [<a onClick={this.editSaveHandle} data-id={item.get('id')}>save</a>,
+                                    <a onClick={this.editCancelHandle} data-id={item.get('id')} data-text={item.get('text')}>cancel</a>]:
+                                    [<a onClick={this.editToggleHandle} data-id={item.get('id')}>edit</a>,
+                                    <a onClick={this.deleteHandle} data-id={item.get('id')}>delete</a>]}>
+                                    {this.state.editable[item.get('id')]?
+                                    <Input
+                                    data-id={item.get('id')}
+                                    onClick={(e)=>{e.stopPropagation()}}
+                                    onChange={this.editInpHandle}
+                                    value={this.state.text[item.get('id')+'text']?this.state.text[item.get('id')+'text']:item.get('text')}></Input>:
+                                    <div 
+                                    data-id={item.get('id')}
+                                    data-isfinish={item.get('isFinish')?1:0}
+                                    onClick={this.setFinishHandle}
+                                    style={Object.assign({width:'100%'},item.get('isFinish')?{textDecoration:'line-through'}:{textDecoration:'none'})}>{item.get('text')}</div>}
+                                    </List.Item>
+                                )}/>
+                            </div>
                         </Content>
-                        <Footer style={{padding:0,background:'#fff'}}>
+                        <Footer style={{marginTop:'10px',padding:0,background:'#fff'}}>
                             <Radio.Group defaultValue="all" onChange={this.filterTodosHandle}>
                                 <Radio.Button value="all">Show All</Radio.Button>
                                 <Radio.Button value="finished">Show Finished</Radio.Button>
                                 <Radio.Button value="unfinished">Show Unfinished</Radio.Button>
                             </Radio.Group>
                         </Footer>
-                    </Layout>
+                    
                 </Col>
             </Row>
         )
